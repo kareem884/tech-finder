@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>دليل ومقارنة الأسعار الذكي | Tech & Home</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Cairo', sans-serif; background-color: #f8fafc; }
+  </style>
+</head>
+<body class="text-slate-800">
+
+  <!-- Navbar -->
+  <nav class="bg-slate-900 text-white sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex flex-wrap justify-between items-center gap-4">
+      <div class="flex items-center gap-2">
+        <span class="text-2xl">⚡</span>
+        <h1 class="text-xl font-extrabold tracking-wide">مُقارِن الأسعار الذكي</h1>
+      </div>
+      
+      <!-- Smart Search Bar -->
+      <div class="flex-1 max-w-xl">
+        <div class="relative">
+          <input type="text" id="smartSearch" placeholder="ابحث عن أي جهاز أو مواصفة (مثال: i7، انفرتر، ماوس، 1.5 حصان)..." 
+            class="w-full px-4 py-2.5 rounded-xl bg-slate-800 text-white placeholder-slate-400 border border-slate-700 focus:outline-none focus:border-blue-500 transition"
+            oninput="applyFilters()">
+          <span class="absolute left-3 top-2.5 text-slate-400">🔍</span>
+        </div>
+      </div>
+
+      <!-- Compare Button -->
+      <button onclick="openCompareModal()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 transition shadow">
+        <span>⚖️ جدول المقارنة</span>
+        <span id="compareCount" class="bg-white text-blue-600 px-2 py-0.5 rounded-full text-xs font-extrabold">0</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="max-w-7xl mx-auto px-4 py-8">
+    
+    <!-- Category Tabs -->
+    <div class="flex flex-wrap gap-2 mb-6" id="categoryTabs">
+      <button onclick="setCategory('all')" class="cat-btn active bg-blue-600 text-white px-5 py-2 rounded-full font-bold text-sm shadow-sm transition">الكل</button>
+      <button onclick="setCategory('laptops')" class="cat-btn bg-white text-slate-700 hover:bg-slate-100 px-5 py-2 rounded-full font-bold text-sm border border-slate-200 transition">💻 لابتوبات</button>
+      <button onclick="setCategory('accessories')" class="cat-btn bg-white text-slate-700 hover:bg-slate-100 px-5 py-2 rounded-full font-bold text-sm border border-slate-200 transition">⌨️ إكسسوارات كمبيوتر</button>
+      <button onclick="setCategory('ac')" class="cat-btn bg-white text-slate-700 hover:bg-slate-100 px-5 py-2 rounded-full font-bold text-sm border border-slate-200 transition">❄️ تكييفات</button>
+      <button onclick="setCategory('appliances')" class="cat-btn bg-white text-slate-700 hover:bg-slate-100 px-5 py-2 rounded-full font-bold text-sm border border-slate-200 transition">🧺 أجهزة كهربائية</button>
+    </div>
+
+    <!-- Price Filter Bar -->
+    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 mb-8 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <label class="font-bold text-sm text-slate-600">الحد الأقصى للسعر:</label>
+        <input type="number" id="maxPrice" placeholder="مثال: 35000" oninput="applyFilters()" 
+          class="border border-slate-300 rounded-lg px-3 py-1.5 text-sm w-40 focus:outline-none focus:border-blue-500">
+      </div>
+      <div class="text-sm text-slate-500 font-semibold" id="resultsCount">جاري تحميل المنتجات...</div>
+    </div>
+
+    <!-- Products Grid -->
+    <div id="productsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Cards injected via JS -->
+    </div>
+  </div>
+
+  <!-- Compare Modal -->
+  <div id="compareModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
+      <div class="flex justify-between items-center border-b pb-4 mb-4">
+        <h2 class="text-xl font-extrabold text-slate-800">⚖️ مقارنة المواصفات والأسعار</h2>
+        <button onclick="closeCompareModal()" class="text-slate-400 hover:text-red-500 text-2xl font-bold">&times;</button>
+      </div>
+      <div id="compareContent" class="overflow-x-auto"></div>
+    </div>
+  </div>
+
+  <script>
+    let allProducts = [];
+    let currentCategory = 'all';
+    let compareList = [];
+
+    // Fetch products dynamically from products.json
+    async function loadProducts() {
+      try {
+        const res = await fetch('products.json?t=' + new Date().getTime());
+        allProducts = await res.json();
+        applyFilters();
+      } catch (err) {
+        document.getElementById('productsGrid').innerHTML = `<p class="text-red-500 font-bold">تأكد من وجود ملف products.json في نفس المجلد.</p>`;
+      }
+    }
+
+    function setCategory(cat) {
+      currentCategory = cat;
+      document.querySelectorAll('.cat-btn').forEach(btn => {
+        btn.classList.remove('bg-blue-600', 'text-white');
+        btn.classList.add('bg-white', 'text-slate-700');
+      });
+      event.target.classList.remove('bg-white', 'text-slate-700');
+      event.target.classList.add('bg-blue-600', 'text-white');
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const query = document.getElementById('smartSearch').value.toLowerCase().trim();
+      const maxPrice = parseFloat(document.getElementById('maxPrice').value) || Infinity;
+
+      const filtered = allProducts.filter(p => {
+        const matchCat = currentCategory === 'all' || p.category === currentCategory;
+        const matchPrice = p.price <= maxPrice;
+        
+        // Smart search across title, category, and all specs
+        const specsString = Object.values(p.specs).join(' ').toLowerCase();
+        const matchQuery = !query || 
+          p.title.toLowerCase().includes(query) || 
+          p.categoryName.toLowerCase().includes(query) || 
+          specsString.includes(query);
+
+        return matchCat && matchPrice && matchQuery;
+      });
+
+      renderProducts(filtered);
+    }
+
+    function renderProducts(products) {
+      const grid = document.getElementById('productsGrid');
+      document.getElementById('resultsCount').innerText = `عدد النتائج: ${products.length} منتج`;
+      grid.innerHTML = '';
+
+      if (products.length === 0) {
+        grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 font-bold text-lg">لا توجد منتجات تطابق بحثك الحالي.. جرب كلمات أخرى!</div>`;
+        return;
+      }
+
+      products.forEach(p => {
+        const isCompared = compareList.some(item => item.id === p.id);
+        let specsHTML = '';
+        for (const [key, val] of Object.entries(p.specs)) {
+          specsHTML += `<li class="flex justify-between py-1 border-b border-slate-100 text-sm"><span class="text-slate-500">${key}:</span><span class="font-semibold text-slate-700">${val}</span></li>`;
+        }
+
+        grid.innerHTML += `
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-start mb-3">
+                <span class="bg-blue-50 text-blue-700 text-xs font-bold px-3 py-1 rounded-full">${p.categoryName}</span>
+                <button onclick="toggleCompare(${p.id})" class="text-xs font-bold px-2.5 py-1 rounded-lg border transition ${isCompared ? 'bg-amber-100 border-amber-400 text-amber-800' : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'}">
+                  ${isCompared ? '✓ في المقارنة' : '+ قارن'}
+                </button>
+              </div>
+              <h3 class="font-extrabold text-lg text-slate-900 mb-3 leading-snug">${p.title}</h3>
+              <ul class="mb-4 space-y-1">${specsHTML}</ul>
+            </div>
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+              <div>
+                <span class="text-xs text-slate-400 block">متوسط السعر</span>
+                <span class="text-xl font-extrabold text-emerald-600">${p.price.toLocaleString()} ${p.currency}</span>
+              </div>
+              <a href="${p.link}" target="_blank" class="bg-slate-900 hover:bg-blue-600 text-white text-sm font-bold px-4 py-2.5 rounded-xl transition">
+                عرض السعر 🔗
+              </a>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function toggleCompare(id) {
+      const product = allProducts.find(p => p.id === id);
+      const index = compareList.findIndex(p => p.id === id);
+      if (index > -1) {
+        compareList.splice(index, 1);
+      } else {
+        if (compareList.length >= 3) {
+          alert('يمكنك مقارنة 3 منتجات كحد أقصى في نفس الوقت.');
+          return;
+        }
+        compareList.push(product);
+      }
+      document.getElementById('compareCount').innerText = compareList.length;
+      applyFilters();
+    }
+
+    function openCompareModal() {
+      const modal = document.getElementById('compareModal');
+      const content = document.getElementById('compareContent');
+      
+      if (compareList.length < 2) {
+        content.innerHTML = `<p class="text-center py-8 text-slate-500 font-bold">اختر منتجين على الأقل بالضغط على زر (+ قارن) لعرض المقارنة.</p>`;
+      } else {
+        let table = `<table class="w-full text-right border-collapse"><thead><tr class="bg-slate-100"><th class="p-3 border">المواصفة</th>`;
+        compareList.forEach(p => table += `<th class="p-3 border font-extrabold text-blue-700">${p.title}</th>`);
+        table += `</tr></thead><tbody>`;
+        
+        // Price Row
+        table += `<tr><td class="p-3 border font-bold bg-slate-50">السعر</td>`;
+        compareList.forEach(p => table += `<td class="p-3 border font-extrabold text-emerald-600">${p.price.toLocaleString()} ${p.currency}</td>`);
+        table += `</tr>`;
+
+        // Dynamic Specs Rows
+        const allKeys = [...new Set(compareList.flatMap(p => Object.keys(p.specs)))];
+        allKeys.forEach(key => {
+          table += `<tr><td class="p-3 border font-bold bg-slate-50">${key}</td>`;
+          compareList.forEach(p => table += `<td class="p-3 border text-sm">${p.specs[key] || '-'}</td>`);
+          table += `</tr>`;
+        });
+
+        table += `</tbody></table>`;
+        content.innerHTML = table;
+      }
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeCompareModal() {
+      const modal = document.getElementById('compareModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    loadProducts();
+  </script>
+</body>
+</html>
