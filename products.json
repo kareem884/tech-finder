@@ -1,0 +1,107 @@
+[
+  {
+    "id": 1,
+    "title": "Dell Precision 5550 Workstation",
+    "category": "laptops",
+    "categoryName": "لابتوبات",
+    "price": 32500,
+    "currency": "ج.م",
+    "specs": {
+      "المعالج": "Core i7-10850H",
+      "الرام": "32GB DDR4",
+      "كارت الشاشة": "Nvidia Quadro T2000 4GB",
+      "الشاشة": "15.6 FHD+"
+    },
+    "link": "#"
+  },
+  {
+    "id": 2,
+    "title": "Lenovo Legion 5 Pro Gaming",
+    "category": "laptops",
+    "categoryName": "لابتوبات",
+    "price": 46000,
+    "currency": "ج.م",
+    "specs": {
+      "المعالج": "Ryzen 7 5800H",
+      "الرام": "16GB DDR4",
+      "كارت الشاشة": "Nvidia RTX 3060 6GB",
+      "الشاشة": "16 165Hz"
+    },
+    "link": "#"
+  },
+  {
+    "id": 3,
+    "title": "Logitech MX Master 3S Wireless Mouse",
+    "category": "accessories",
+    "categoryName": "إكسسوارات كمبيوتر",
+    "price": 4200,
+    "currency": "ج.م",
+    "specs": {
+      "التوصيل": "Bluetooth / Logi Bolt USB",
+      "الدقة": "8000 DPI",
+      "البطارية": "تصل إلى 70 يوم",
+      "المميزات": "نقرات صامتة + سكرول فائق السرعة"
+    },
+    "link": "#"
+  },
+  {
+    "id": 4,
+    "title": "Keychron K2 Mechanical Keyboard",
+    "category": "accessories",
+    "categoryName": "إكسسوارات كمبيوتر",
+    "price": 4800,
+    "currency": "ج.م",
+    "specs": {
+      "النوع": "Mechanical (Brown Switch)",
+      "التوصيل": "Wireless / USB-C",
+      "الإضاءة": "RGB Backlit",
+      "التوافق": "Windows & Mac"
+    },
+    "link": "#"
+  },
+  {
+    "id": 5,
+    "title": "تكييف شارب 1.5 حصان انفرتر بارد فقط",
+    "category": "ac",
+    "categoryName": "تكييفات",
+    "price": 24500,
+    "currency": "ج.م",
+    "specs": {
+      "القدرة": "1.5 حصان",
+      "التقنية": "انفرتر موفر للطاقة",
+      "المساحة المغطاة": "حتى 12 متر مربع",
+      "الضمان": "5 سنوات"
+    },
+    "link": "#"
+  },
+  {
+    "id": 6,
+    "title": "تكييف كاريير اوبتيماكس 2.25 حصان بارد ساخن",
+    "category": "ac",
+    "categoryName": "تكييفات",
+    "price": 34000,
+    "currency": "ج.م",
+    "specs": {
+      "القدرة": "2.25 حصان",
+      "التقنية": "بلازما جرين + تبريد سريع",
+      "المساحة المغطاة": "حتى 18 متر مربع",
+      "الضمان": "5 سنوات"
+    },
+    "link": "#"
+  },
+  {
+    "id": 7,
+    "title": "غسالة ملابس ال جي 8 كيلو تحميل أمامي",
+    "category": "appliances",
+    "categoryName": "أجهزة كهربائية",
+    "price": 26000,
+    "currency": "ج.م",
+    "specs": {
+      "السعة": "8 كجم",
+      "الموتور": "دفع مباشر انفرتر (Direct Drive)",
+      "البرامج": "14 برنامج غسيل بالبخار",
+      "السرعة": "1400 لفة في الدقيقة"
+    },
+    "link": "#"
+  }
+]
